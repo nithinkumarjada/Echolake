@@ -1,4 +1,4 @@
-name: CI
+name: EchoLake CI
 
 on:
   push:
@@ -7,15 +7,14 @@ on:
     branches: [main]
 
 jobs:
-  quality:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 22
-          cache: npm
-      - run: npm install
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm run build
+          python-version: "3.11"
+      - name: Generate synthetic sample
+        run: python3 scripts/generate_synthetic_finance.py --rows 250 --output data/raw/transactions.csv
+      - name: Validate project structure
+        run: python3 scripts/validate_project.py

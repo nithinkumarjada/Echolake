@@ -1,0 +1,20 @@
+name: echolake
+version: 1.0.0
+config-version: 2
+
+profile: echolake
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+models:
+  echolake:
+    bronze:
+      +materialized: view
+      +schema: bronze
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold

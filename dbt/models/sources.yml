@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw
+    database: awsdatacatalog
+    schema: echolake_dev_lakehouse
+    tables:
+      - name: bronze_transactions
+        description: Raw transaction records stored as an Apache Iceberg table.
+        columns:
+          - name: transaction_id
+            tests: [not_null]
+          - name: amount
+            tests: [not_null]
+          - name: ingestion_date
+            tests: [not_null]

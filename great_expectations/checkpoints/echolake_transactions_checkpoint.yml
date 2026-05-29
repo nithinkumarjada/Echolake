@@ -1,0 +1,14 @@
+name: echolake_transactions_checkpoint
+config_version: 1.0
+class_name: Checkpoint
+run_name_template: "%Y%m%d-%H%M%S-echolake-transactions"
+validations:
+  - batch_request:
+      datasource_name: echolake_athena
+      data_connector_name: default_runtime_data_connector_name
+      data_asset_name: silver_transactions
+      runtime_parameters:
+        query: "select * from silver_transactions"
+      batch_identifiers:
+        default_identifier_name: silver_transactions
+    expectation_suite_name: transactions_expectation_suite

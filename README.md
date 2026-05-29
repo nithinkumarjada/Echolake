@@ -1,64 +1,75 @@
-# Nithin Kumar Jada Premium Portfolio
+# EchoLake
 
-Modern personal portfolio built with Next.js, TypeScript, Tailwind CSS, Framer Motion, Three.js, and production deployment assets.
+EchoLake is a production-style modern data lakehouse on AWS using S3, Glue, EMR, Athena, Apache Iceberg, dbt, Airflow, Great Expectations, Terraform, and GitHub Actions.
 
-## Features
+The project models a financial analytics pipeline with a medallion architecture:
 
-- Dark and light mode with accessible theme toggle
-- Responsive sticky navigation, command palette, scroll progress, and floating social links
-- Animated hero with Three.js particles and dynamic role marquee
-- About, skills, experience, projects, certifications, education, achievements, GitHub, blog, testimonials, resume, advanced features, and contact sections
-- Project search, category filters, and animated case-study modals
-- SEO metadata, sitemap, robots, JSON-LD structured data, favicon, PWA manifest, and service worker
-- Dockerfile and GitHub Actions CI pipeline
-- Optional database schema in `docs/schema.sql` for analytics, contact messages, newsletter, and chatbot telemetry
+- Bronze: raw synthetic financial transactions landed in S3 and registered as Iceberg tables
+- Silver: standardized, deduplicated, quality-checked transaction facts
+- Gold: analytics marts for account risk, merchant performance, and daily finance KPIs
 
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-## Resume
-
-Add the resume PDF at:
+## Architecture
 
 ```text
-public/resume/Nithin_SDE.pdf
+Synthetic Finance Data
+        |
+        v
+S3 Raw Zone -> EMR Spark + Iceberg -> Glue Catalog
+        |                 |
+        |                 v
+        |          dbt Bronze/Silver/Gold Models
+        |                 |
+        v                 v
+Great Expectations <- Athena Query Layer
+        |
+        v
+Airflow DAG Orchestration + GitHub Actions CI/CD
 ```
 
-The current UI points resume preview and download actions to that file.
+## Repository Layout
 
-## Production Build
+```text
+airflow/dags/                  Airflow DAG for orchestration
+dbt/                           dbt project with medallion models
+great_expectations/            Data quality expectations and checkpoint
+scripts/                       Synthetic data generation and validation scripts
+spark/jobs/                    PySpark Iceberg job
+terraform/                     AWS infrastructure as code
+docs/                          Architecture notes and query examples
+.github/workflows/ci.yml       CI checks
+```
+
+## Local Quickstart
+
+Generate a sample financial dataset:
 
 ```bash
-npm run typecheck
-npm run lint
-npm run build
-npm run start
+python3 scripts/generate_synthetic_finance.py --rows 1000 --output data/raw/transactions.csv
 ```
 
-## Docker
+Validate the repository structure and SQL model conventions:
 
 ```bash
-docker build -t nithin-portfolio .
-docker run -p 3000:3000 nithin-portfolio
+python3 scripts/validate_project.py
 ```
 
-## Deployment
+## AWS Deployment Flow
 
-Recommended deployment targets:
+1. Configure AWS credentials with permissions for S3, Glue, EMR, Athena, IAM, CloudWatch, and EC2 networking.
+2. Create infrastructure:
 
-- Vercel for fastest Next.js SSR deployment
-- AWS Amplify or Azure Static Web Apps with SSR-compatible configuration
-- Docker on ECS, Cloud Run, App Service, or Kubernetes
+```bash
+cd terraform
+terraform init
+terraform plan -var="project_name=echolake" -var="aws_region=us-east-1"
+terraform apply -var="project_name=echolake" -var="aws_region=us-east-1"
+```
 
-Set these before launch:
+3. Upload raw data to the Terraform-created S3 raw prefix.
+4. Submit `spark/jobs/bronze_to_iceberg.py` on EMR with Iceberg packages enabled.
+5. Run dbt models against Athena or Glue-backed Iceberg tables.
+6. Trigger the Airflow DAG `echolake_finance_lakehouse`.
 
-- Replace placeholder social URLs, email, phone, and GitHub username in `lib/portfolio-data.ts`
-- Add the actual resume PDF under `public/resume/`
-- Connect contact and newsletter forms to an API route or provider
-- Add analytics through `@next/third-parties` or your preferred provider
+## Notes
+
+This repository is designed to be deployable with real AWS credentials, while still being reviewable locally without provisioning cloud resources.

@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: bronze_transactions
+    description: Raw Iceberg-backed transaction feed exposed to dbt.
+  - name: silver_transactions
+    description: Deduplicated and standardized transaction fact table.
+    columns:
+      - name: transaction_id
+        tests: [not_null, unique]
+      - name: amount
+        tests: [not_null]
+      - name: status
+        tests:
+          - accepted_values:
+              values: ["posted", "pending", "reversed"]
+  - name: gold_daily_finance_kpis
+    description: Daily transaction KPIs for Athena dashboards.
