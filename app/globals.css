@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --font-inter: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-space: "Space Grotesk", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --background: 246 249 252;
+  --foreground: 16 19 26;
+  --muted: 91 105 121;
+  --card: 255 255 255;
+  --line: 214 224 234;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: 6 10 18;
+  --foreground: 238 244 250;
+  --muted: 156 171 187;
+  --card: 13 19 31;
+  --line: 44 58 75;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(82, 214, 255, 0.18), transparent 28rem),
+    radial-gradient(circle at 85% 16%, rgba(112, 240, 187, 0.16), transparent 24rem),
+    rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: var(--font-inter), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+body::selection {
+  background: rgba(82, 214, 255, 0.35);
+}
+
+a,
+button,
+input,
+textarea {
+  outline-color: rgb(82 214 255);
+  outline-offset: 3px;
+}
+
+.glass {
+  border: 1px solid rgba(var(--line), 0.75);
+  background: rgba(var(--card), 0.68);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+}
+
+.dark .glass {
+  background: rgba(var(--card), 0.62);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.3);
+}
+
+.section-shell {
+  margin-inline: auto;
+  width: min(1180px, calc(100% - 32px));
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--line), 0.8);
+  background: rgba(var(--card), 0.58);
+  padding: 0.38rem 0.75rem;
+  color: rgb(var(--muted));
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.premium-grid {
+  background-image:
+    linear-gradient(rgba(var(--line), 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--line), 0.45) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(-150%);
+  border-radius: 999px;
+  background: rgb(var(--foreground));
+  color: rgb(var(--background));
+  padding: 0.75rem 1rem;
+  font-weight: 800;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
